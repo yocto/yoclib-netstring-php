@@ -12,14 +12,22 @@ This yocLibrary enables your project to encode and decode Netstring values in PH
 
 ## Use
 
-### Serialization
+### Encoding
 
 ```php
-//TODO
+use YOCLIB\Netstring\Netstring;
+
+$string = 'abc';
+
+$netstring = Netstring::encode($string);
 ```
 
-### Deserialization
+### Decoding
 
 ```php
-//TODO
+use YOCLIB\Netstring\Netstring;
+
+$netstring = '3:abc,';
+
+$string = Netstring::decode($netstring);
 ```
