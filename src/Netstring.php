@@ -1,22 +1,60 @@
 <?php
 namespace YOCLIB\Netstring;
 
+use Exception;
+
 class Netstring{
 
-    private $string;
+    /**
+     * @var int $maxLength
+     */
+    private static $maxLength = 2000000;
 
     /**
-     * @return string
+     * @return int
      */
-    public function getString(){
-        return $this->string;
+    public static function getMaxLength(){
+        return self::$maxLength;
     }
 
     /**
-     * @param string string
+     * @param $maxLength
+     * @return void
      */
-    public function setString($string): void{
-        $this->string = $string;
+    public static function setMaxLength($maxLength){
+        self::$maxLength = $maxLength;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public static function decode($string){
+        $length = explode(':',$string,2)[0] ?? null;
+        if($length==null){
+            throw new Exception('Netstring does not have a semicolon.');
+        }
+        $semicolon = $string[strlen($length)] ?? null;
+        if($semicolon!=':'){
+            throw new Exception('Expecting semicolon. Was \''.$semicolon.'\'.');
+        }
+        $data = substr($string,strlen($length)+1,intval($length));
+        $comma = $string[strlen($length)+1+intval($length)] ?? null;
+        if($comma!=','){
+            throw new Exception('Expecting comma. Was \''.$comma.'\'.');
+        }
+        return $data;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public static function encode($string){
+        if(strlen($string)>self::$maxLength){
+            throw new Exception('Length of '.strlen($string).' exceeding '.self::$maxLength.' during encoding.');
+        }
+        return strlen($string).':'.$string.',';
     }
 
 }
